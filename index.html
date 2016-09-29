@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="anagram.css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Anagram</title>
+</head>
+<body>
+
+<div ng-app="myApp" ng-controller="myCtrl">
+
+    Original: <input type="text" ng-model="original"> {{remaining(anagram,original)}}<br>
+    Anagram: <input type="text" ng-model="anagram"> {{remaining(original,anagram)}} <br>
+    <div ng-show="perfectMatch" class="perfectMatch">Perfect Match!</div>  <br>
+    {{original + " : " + anagram}} <br>
+
+</div>
+
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('myCtrl', function($scope) {
+        $scope.original = "Mr. Mojo Risin";
+        $scope.anagram = "Jim Morrison";
+
+        $scope.remaining = function (original, anagram) {
+
+            var remaining = {};
+
+            var i = original.length;
+
+            var letter;
+
+            while (i--) {
+                letter = original[i];
+                if (isLetter(letter)) {
+                    letter = letter.toLowerCase();
+                    if (!remaining[letter]) remaining[letter] = 0;
+                    remaining[letter] = remaining[letter] + 1;
+                }
+            }
+
+            i = anagram.length;
+
+            while (i--) {
+                letter = anagram[i];
+                if (isLetter(letter)) {
+                    letter = letter.toLowerCase();
+                    if (!remaining[letter]) remaining[letter] = 0;
+                    remaining[letter] = remaining[letter] - 1;
+                }
+            }
+
+            var rem = ""
+            var ext = "";
+
+            $scope.perfectMatch = true;
+            for (var letr in remaining) {
+
+                var remcnt = remaining[letr];
+                if (remcnt > 0){
+                    rem = rem + " " + letr.repeat(remcnt) + " " ;
+                    $scope.perfectMatch = false;
+                } else if (remcnt < 0) {
+                    ext = ext + " " + letr.repeat(-remcnt) + " " ;
+                    $scope.perfectMatch = false;
+                }
+            }
+
+//            if (ext != "") {
+//                rem = rem + " <" + ext + ">";
+//            }
+
+            return rem;
+        }
+
+    });
+
+    function isLetter(str) {
+        return str.length === 1 && str.match(/[a-z]/i);
+    }
+
+</script>
+
+</body>
+</html>
